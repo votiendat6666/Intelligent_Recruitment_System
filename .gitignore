@@ -1,0 +1,19 @@
+# Node modules (Frontend)
+node_modules/
+dist/
+.env
+
+# Java/Maven (Backend)
+target/
+!.mvn/wrapper/maven-wrapper.jar
+*.class
+.mtj.tmp/
+*.jar
+*.war
+*.ear
+
+# IDE rác
+.idea/
+.vscode/
+*.swp
+*.DS_Stores
