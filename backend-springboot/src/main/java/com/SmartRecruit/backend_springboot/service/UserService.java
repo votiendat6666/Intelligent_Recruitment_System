@@ -50,7 +50,7 @@ public class UserService {
         // user.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(user);
-        emailService.sendVerificationEmail(user.getEmail(), token);
+        emailService.sendVerificationEmail(user.getEmail(), token, user.getFullName());
     }
 
     public void verifyEmail(String token) {

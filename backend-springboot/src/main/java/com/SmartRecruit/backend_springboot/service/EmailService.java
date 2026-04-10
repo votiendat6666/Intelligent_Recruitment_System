@@ -3,17 +3,11 @@ package com.SmartRecruit.backend_springboot.service;
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.core.io.ClassPathResource;
-import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
 import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.TemplateEngine;
 import org.thymeleaf.context.Context;
-
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 
 @Service
 public class EmailService {
@@ -23,95 +17,49 @@ public class EmailService {
 
     @Autowired
     private TemplateEngine templateEngine;
-    //Xác thực tài khoản
-    public void sendVerificationEmail(String toEmail, String token) {
+
+    private final String FROM_EMAIL = "votiendat842004@gmail.com";
+
+    /**
+     * Gửi email xác thực tài khoản
+     */
+    public void sendVerificationEmail(String toEmail, String token, String fullName) {
         try {
+            // 1. Tạo Context để truyền biến vào HTML
+            Context context = new Context();
             String link = "http://localhost:8080/auth/verify?token=" + token;
 
+            context.setVariable("fullName", fullName);
+            context.setVariable("verificationUrl", link);
 
-            String template = new String(Files.readAllBytes(
-                    Paths.get(new ClassPathResource("templates/verification_email.html").getURI())
-            ));
+            // 2. Sử dụng templateEngine để render HTML từ file
+            // Lưu ý: Đường dẫn này tương ứng với: src/main/resources/templates/email/verification_email.html
+            String htmlContent = templateEngine.process("verification_email", context);
 
-
-            String content = template.replace("{{link}}", link);
-
-
-            MimeMessage message = mailSender.createMimeMessage();
-            MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
-
-            helper.setTo(toEmail);
-            helper.setSubject("Xác thực tài khoản trên hệ thống SportArena");
-            helper.setText(content, true);
-            helper.setFrom("tpn18092004@gmail.com");
-
-            mailSender.send(message);
+            // 3. Gửi Mail
+            sendHtmlMail(toEmail, "Xác thực tài khoản - IntelligentRecruit", htmlContent);
         } catch (Exception e) {
             e.printStackTrace();
-            throw new RuntimeException("Lỗi gửi email xác thực: " + e.getMessage());
+            throw new RuntimeException("Lỗi chuẩn bị email xác thực: " + e.getMessage());
         }
     }
 
-
-
-    // ===== APPROVE =====
-    public void sendApproveCourtEmail(String to, String courtName, String fullName) {
-
-        Context context = new Context();
-        context.setVariable("courtName", courtName);
-        context.setVariable("link", "http://localhost:3000/courts");
-        context.setVariable("fullName", fullName);
-
-        String html = templateEngine.process("email/approve-court", context);
-
-        sendHtmlMail(to, "🎉 Sân đã được duyệt", html);
-    }
-
-    // ===== REJECT =====
-    public void sendRejectCourtEmail(String to, String courtName, String reason, String fullName) {
-
-        Context context = new Context();
-        context.setVariable("courtName", courtName);
-        context.setVariable("reason", reason);
-        context.setVariable("fullName", fullName);
-
-
-        String html = templateEngine.process("email/reject-court", context);
-
-        sendHtmlMail(to, "❌ Sân bị từ chối", html);
-    }
-    public void sendBookingSuccessEmail(
-            String to,
-            String fullName,
-            String courtName,
-            String bookingDateTime,
-            String totalAmount
-    ) {
-
-        Context context = new Context();
-        context.setVariable("fullName", fullName);
-        context.setVariable("courtName", courtName);
-        context.setVariable("time", bookingDateTime);
-        context.setVariable("totalAmount", totalAmount);
-
-        String html = templateEngine.process("email/booking-success", context);
-
-        sendHtmlMail(to, "✅ Đặt sân thành công", html);
-    }
-
+    /**
+     * Hàm dùng chung để gửi email định dạng HTML
+     */
     private void sendHtmlMail(String to, String subject, String htmlContent) {
         try {
             MimeMessage message = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(message, true, "UTF-8");
 
+            helper.setFrom(FROM_EMAIL);
             helper.setTo(to);
             helper.setSubject(subject);
-            helper.setText(htmlContent, true);
+            helper.setText(htmlContent, true); // true nghĩa là gửi nội dung dạng HTML
 
             mailSender.send(message);
-
-        } catch (Exception e) {
-            throw new RuntimeException("Lỗi gửi mail: " + e.getMessage());
+        } catch (MessagingException e) {
+            throw new RuntimeException("Lỗi khi gửi mail qua SMTP: " + e.getMessage());
         }
     }
 }
