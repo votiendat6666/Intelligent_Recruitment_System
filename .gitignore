@@ -12,7 +12,7 @@ target/
 *.war
 *.ear
 # QUAN TRỌNG: Chặn file chứa mật khẩu
-backend-springbootsrc/main/resources/application.yaml
+backend-springboot/src/main/resources/application.yaml
 backend-springboot/src/main/resources/application.properties
 
 # --- IDE & System ---
