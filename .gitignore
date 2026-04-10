@@ -1,19 +1,23 @@
-# Node modules (Frontend)
+# --- Frontend (React) ---
 node_modules/
 dist/
 .env
+.env.local
 
-# Java/Maven (Backend)
+# --- Backend (Spring Boot) ---
 target/
 !.mvn/wrapper/maven-wrapper.jar
 *.class
-.mtj.tmp/
 *.jar
 *.war
 *.ear
+# QUAN TRỌNG: Chặn file chứa mật khẩu
+backend-springbootsrc/main/resources/application.yaml
+backend-springboot/src/main/resources/application.properties
 
-# IDE rác
+# --- IDE & System ---
 .idea/
 .vscode/
 *.swp
 *.DS_Store
+*.log
