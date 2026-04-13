@@ -1,4 +1,4 @@
-package com.SmartRecruit.backend_springboot.service;
+package com.SmartRecruit.backend_springboot.service.Setting;
 
 import jakarta.mail.MessagingException;
 import jakarta.mail.internet.MimeMessage;

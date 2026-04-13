@@ -1,7 +1,7 @@
 package com.SmartRecruit.backend_springboot.security;
 
-import com.SmartRecruit.backend_springboot.service.CandidateUserDetailsService; // Import đúng tên mới
-import com.SmartRecruit.backend_springboot.service.JwtService;
+import com.SmartRecruit.backend_springboot.service.User.CandidateUserDetailsService; // Import đúng tên mới
+import com.SmartRecruit.backend_springboot.service.Setting.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

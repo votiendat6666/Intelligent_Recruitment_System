@@ -2,10 +2,9 @@ package com.SmartRecruit.backend_springboot.config;
 
 
 import com.SmartRecruit.backend_springboot.security.JwtFilter;
-import com.SmartRecruit.backend_springboot.service.CandidateUserDetailsService;
+import com.SmartRecruit.backend_springboot.service.User.CandidateUserDetailsService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -41,15 +40,15 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(
-                                "/auth/register", "/auth/register/**", "/auth/login", "/auth/verify", "/ws/**",
-                                "/payments/vnpay/callback",
-                                "/courts/search",
-                                "/courts/categories",
-                                "/courts/*/available-slots",
+                                "/auth/register", "/auth/register/**", "/auth/social-login" ,"/auth/login", "/auth/verify", "/ws/**",
+                                "/payments/vnpay/callback", "/api/locations",
+                                "/api/search",
+                                "/api/categories",
+                                "/api/*/available-slots",
                                 "/courts/**"
                         ).permitAll()
                         .requestMatchers("/admin/**").hasRole("ADMIN")
-                        .requestMatchers("/owner/**").hasRole("OWNER")
+                        .requestMatchers("/recruiter/**").hasRole("RECRUITER")
                         .anyRequest().authenticated()
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))

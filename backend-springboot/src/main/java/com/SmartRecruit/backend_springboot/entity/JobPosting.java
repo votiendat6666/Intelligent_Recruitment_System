@@ -9,43 +9,48 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "job_postings")
-@Getter @Setter @NoArgsConstructor @AllArgsConstructor @Builder
+@Data
 public class JobPosting {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    private int id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "recruiter_id")
-    private User recruiter;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "company_id")
-    private Company company;
-
-    @Column(nullable = false, length = 200)
     private String title;
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private JobPostingType jobType;
+    @Column(columnDefinition = "TEXT")
+    private String description;
 
-    private String experienceLevel;
+    @Column(columnDefinition = "TEXT")
+    private String requirements;
+
+    @Column(columnDefinition = "TEXT")
+    private String benefits;
+
     private BigDecimal salaryMin;
     private BigDecimal salaryMax;
 
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String description;
-
-    @Column(nullable = false, columnDefinition = "TEXT")
-    private String requirements;
-
     @Enumerated(EnumType.STRING)
-    private JobPostingStatus status = JobPostingStatus.DRAFT;
+    private JobPostingType jobType; // FULL_TIME, PART_TIME...
 
-    private LocalDateTime expiredAt;
-    private LocalDateTime createdAt;
+    // Nối với Company
+    @ManyToOne
+    @JoinColumn(name = "company_id")
+    private Company company;
 
-    @PrePersist
-    protected void onCreate() { createdAt = LocalDateTime.now(); }
+    // Nối với Location (Bảng vừa tạo)
+    @ManyToOne
+    @JoinColumn(name = "location_id")
+    private Location location;
+
+    // Nối với Category (Vị trí/Ngành nghề)
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
+
+    // Cột JSON để lưu Vector AI (Dùng String hoặc mảng tùy thư viện hỗ trợ)
+    @Column(name = "job_vector", columnDefinition = "json")
+    private String jobVector;
+
+    @Column(name = "created_at")
+    private LocalDateTime createdAt = LocalDateTime.now();
 }

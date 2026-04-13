@@ -1,9 +1,13 @@
-package com.SmartRecruit.backend_springboot.service;
+package com.SmartRecruit.backend_springboot.service.User;
 
-import com.SmartRecruit.backend_springboot.dto.*;
+import com.SmartRecruit.backend_springboot.dto.Auth.RegisterRequest;
+import com.SmartRecruit.backend_springboot.dto.User.UserResponse;
 import com.SmartRecruit.backend_springboot.entity.User;
+import com.SmartRecruit.backend_springboot.entity.enums.UserRole;
 import com.SmartRecruit.backend_springboot.entity.enums.UserStatus;
 import com.SmartRecruit.backend_springboot.repository.UserRepository;
+import com.SmartRecruit.backend_springboot.service.Setting.CloudinaryService;
+import com.SmartRecruit.backend_springboot.service.Setting.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -23,31 +27,26 @@ public class UserService {
             throw new IllegalArgumentException("Email đã được sử dụng.");
         }
 
-        String avatarUrl = null;
-        if (req.getAvatarUrl() != null && !req.getAvatarUrl().isEmpty()) {
-            avatarUrl = cloudinaryService.uploadImage(req.getAvatarUrl());
-        }
-
         String token = UUID.randomUUID().toString();
-
-        // Sử dụng Builder nếu bạn đã thêm @Builder ở Entity (như tôi gợi ý lúc nãy)
-        // hoặc dùng Setter như cũ nhưng sửa kiểu dữ liệu
         User user = new User();
+
         user.setEmail(req.getEmail());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
-        user.setFullName(req.getFullName());
+
+        // Xử lý FullName
+        if (req.getFullName() != null && !req.getFullName().trim().isEmpty()) {
+            user.setFullName(req.getFullName());
+        } else {
+            user.setFullName(req.getEmail().split("@")[0]);
+        }
+
         user.setPhone(req.getPhone());
-        user.setAvatarUrl(avatarUrl);
-        user.setRole(req.getRole());
+        user.setAvatarUrl(null); // Luôn để null hoặc một link ảnh mặc định
+        user.setRole(UserRole.CANDIDATE); // Mặc định là CANDIDATE như bạn muốn
         user.setVerified(false);
         user.setStatus(UserStatus.INACTIVE);
         user.setVerificationToken(token);
-
-        // SỬA TẠI ĐÂY: Gán trực tiếp LocalDateTime, không dùng Timestamp.valueOf
         user.setTokenExpiresAt(LocalDateTime.now().plusHours(24));
-
-        // Lưu ý: Nếu ở Entity dùng @PrePersist thì không cần dòng dưới này
-        // user.setCreatedAt(LocalDateTime.now());
 
         userRepository.save(user);
         emailService.sendVerificationEmail(user.getEmail(), token, user.getFullName());
@@ -72,5 +71,21 @@ public class UserService {
     public User getCurrentUser(String email) {
         return userRepository.findByEmail(email)
                 .orElseThrow(() -> new IllegalArgumentException("Không tìm thấy người dùng."));
+    }
+
+    public UserResponse getUserProfile(String email) {
+        User user = userRepository.findByEmail(email)
+                .orElseThrow(() -> new RuntimeException("Không tìm thấy người dùng với email: " + email));
+
+        // Chuyển đổi từ Entity User sang DTO UserResponse
+        UserResponse response = new UserResponse();
+        response.setId(user.getId());
+        response.setFullName(user.getFullName());
+        response.setRole(user.getRole() != null ? user.getRole().name() : null);
+        response.setAvatarUrl(user.getAvatarUrl());
+        response.setPhone(user.getPhone());
+        response.setEmail(user.getEmail());
+
+        return response;
     }
 }

@@ -1,4 +1,4 @@
-package com.SmartRecruit.backend_springboot.service;
+package com.SmartRecruit.backend_springboot.service.User;
 
 import com.SmartRecruit.backend_springboot.repository.UserRepository;
 import com.SmartRecruit.backend_springboot.security.CandidateUserDetails;
@@ -8,7 +8,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 @Service
-// Đã đổi tên class thành CandidateUserDetailsService
+// Kiểm tra user có dùng chưa
 public class CandidateUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
 

@@ -1,4 +1,4 @@
-package com.SmartRecruit.backend_springboot.dto;
+package com.SmartRecruit.backend_springboot.dto.User;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -7,11 +7,11 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class LoginResponse {
+public class UserResponse {
     private Integer id;
-    private String token;
-    private String role;
     private String fullName;
-    private String phone;
+    private String role;
     private String avatarUrl;
+    private String phone;
+    private String email;
 }

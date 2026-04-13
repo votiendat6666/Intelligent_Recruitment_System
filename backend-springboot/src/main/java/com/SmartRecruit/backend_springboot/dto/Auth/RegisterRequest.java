@@ -1,4 +1,4 @@
-package com.SmartRecruit.backend_springboot.dto;
+package com.SmartRecruit.backend_springboot.dto.Auth;
 
 import com.SmartRecruit.backend_springboot.entity.enums.UserRole;
 import lombok.Data;
@@ -11,5 +11,5 @@ public class RegisterRequest {
     private String fullName;
     private String phone;
     private UserRole role;
-    private MultipartFile avatarUrl; // Dùng MultipartFile để nhận file từ Frontend
+//    private MultipartFile avatarUrl; // Dùng MultipartFile để nhận file từ Frontend
 }

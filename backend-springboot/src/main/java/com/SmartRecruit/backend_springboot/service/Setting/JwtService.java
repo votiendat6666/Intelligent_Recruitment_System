@@ -1,4 +1,4 @@
-package com.SmartRecruit.backend_springboot.service;
+package com.SmartRecruit.backend_springboot.service.Setting;
 
 
 import com.SmartRecruit.backend_springboot.entity.User;
